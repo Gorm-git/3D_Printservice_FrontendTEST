@@ -1,4 +1,4 @@
-const endpoint = "http://localhost:4811/";
+const endpoint = "https://3dprintservice.azurewebsites.net/";
 
 async function getCatalogueData() {
   const response = await fetch(`${endpoint}/products`);

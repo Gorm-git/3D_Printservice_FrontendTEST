@@ -1,3 +1,4 @@
+"use strict"
 
 import { getCatalogueData, getStockData } from "./fetch-data.js";
 import { catalogueData, stockData } from "./tempoary-data-doc.js";
@@ -24,12 +25,6 @@ async function getAllData() {
   console.log(catalogueData);
   createCatalogClasses(catalogueData);
 }
-
-document.querySelector("#faq-link").addEventListener("click", showDialogFaq);
-document.querySelector("#handelsbetingelser-link").addEventListener("click", showDialogHandelsbetingelser);
-document.querySelector("#datapolitik-link").addEventListener("click", showDialogDatapolitik);
-
-
 
 function activateEventListeners() {
   document.querySelector("#faq-link").addEventListener("click", showDialogFaq);

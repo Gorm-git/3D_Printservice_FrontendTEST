@@ -1,5 +1,6 @@
 // Denne funktion laver klasserne for vores katalog-vare
 export function createCatalogClasses(dataList) {
+  console.log("No.1 createCatalogClasses");
   // Opret en tom liste så hvert objekt vi fetcher kan komme ind som en instans af en klasse
   const classList = [];
 
@@ -12,11 +13,69 @@ export function createCatalogClasses(dataList) {
     classList.push(newInstance);
   }
 
+  // Her laver jeg et instance - af stock.
+  createInstanceOfStock();
+
+  //Her køres render metoden for alle vores instances af catalogue klassen.
   console.log(classList);
   callRenderMethod(classList);
 
-  // Her laver jeg et instance - af stock.
-  stockObjectToClass();
+  // Her laver jeg en instance af Product...
+  createInstanceOfProdut();
+}
+
+function callRenderMethod(listOfInstances) {
+  console.log("No3. CallRenderMethod");
+  for (const instance of listOfInstances) {
+    console.log();
+    const classHTML = instance.render();
+    console.log(classHTML);
+  }
+}
+
+// PT.lokal-global variabel.
+const stockMaterialObject = {
+  Name: "Sort Hård",
+  Material: "PLA",
+  Colour: "black",
+  GramInStock: "1000",
+  MinAmountReached: 0,
+  SalesPrize: "200",
+};
+
+let stockMaterialInstance;
+
+function createInstanceOfStock() {
+  console.log("no2. createInsanceOfStock");
+  stockMaterialInstance = new StockMaterial(stockMaterialObject);
+  console.log("Render material: ", stockMaterialInstance.render());
+}
+
+class StockMaterial {
+  constructor(stockObject) {
+    this.Name = stockObject.Name;
+    this.Material = stockObject.Material;
+    this.Colour = stockObject.Colour;
+    this.GramInStock = stockObject.GramInStock;
+    this.MinAmountReached = stockObject.MinAmountReached;
+    this.SalesPrize = stockObject.SalesPrize;
+  }
+
+  render() {
+    const stockHTML =
+      /*html*/
+      `
+    <article>
+    <h3>Produkt Navn: ${this.Name}</h3>
+    <p>Materiale: ${this.Material}</p>
+    <p>Farve: ${this.Colour} cm</p>
+    <:> Mængde på lager: ${this.GramInStock} gram</p>
+    <p>Minimum nået: ${this.MinAmountReached} </p>
+    <p>Salgspris: ${this.SalesPrize} dkk/gram</p>
+    </article>
+    `;
+    return stockHTML;
+  }
 }
 
 // Note til os selv. Denne klasse skal vel kun rigtigt ses af Admin, som skal kunne opdatere dem... - Lukas
@@ -54,12 +113,8 @@ class catalogueItem {
   // Vi skal have en metode til at kunne ændre i samtlige Attirbutter og opdatere databasen der efter - Lukas.
 }
 
-function callRenderMethod(listOfInstances) {
-  for (const instance of listOfInstances) {
-    const classHTML = instance.render();
-    console.log(classHTML);
-  }
-
+function createInstanceOfProdut() {
+  console.log("CreateInstanceOfProduct");
   // her laver jeg en instance af en produkt-klasse, bare lige for at teste den.
   const productObject = {
     // Attributterne fra det catalog-varen
@@ -76,22 +131,40 @@ function callRenderMethod(listOfInstances) {
     ProductSize: 20,
   };
 
+  //  Name: "Sort Hård",
+  //   Material: "PLA",
+  //   Colour: "black",
+  //   GramInStock: "1000",
+  //   MinAmountReached: 0,
+  //   SalesPrize: "200"
+
   // Her laves instansen...
-  const productInstance = new product(productObject);
+  const productInstance = new product(productObject, stockMaterialObject);
   // Her kalder jeg render-metoden for produkt klassen for at se HTML'en som metoden returnere.
 
-  console.log("Catalog størrelse: ", productInstance.StandardSize);
-  console.log("Catalog vægt: ", productInstance.StandardWeight);
-  console.log("Størrelse: ", productInstance.ProductSize);
-  console.log("pris: ", productInstance.CalculatedPrize);
   console.log(productInstance.render());
 }
 
+/* MIN TANKE er at arve fra 2 klasser - fordi det er sådan mit ERD ser ud - det giver mening at genbruge... 
+ attributter, men giver det meing at nedarve fra 2 klasser her egentlig, kan jeg ikke bare give den et par attributter mere manuelt...
+
+ Der er jo ikke en IS-A relation? Der er en HAS-A relation 
+Product has a catalog-item (og is an Item) og has a material.
+
+Er det her hovedpinen værd?
+ */
+
 // Produkt klassen skal (ned)arve fra catalogItem (og StockMaterial) klassen - derfor skal der skrives "extends"
-class product extends catalogueItem {
-  constructor(productObjekt) {
-    // super - refferere til superklassen ...ER IKKE SIKKER PÅ PRÆCIS HVAD DER FOREGÅR DER - Lukas
-    super(catalogueItem);
+class product {
+  constructor(productObjekt, stockObject) {
+    // super - er noget der reffere til conturctoren fra den parrent-class som vi arver/extender fra
+    // super(productObjekt);
+
+    // Kalder constructor af den anden parrent-class (StockMaterial)... her bruger vi "compositions" da JS ikke KAN arve fra 2 klasser
+    // StockMaterial.call(this, stockObject);
+    new StockMaterial(stockObject);
+    new catalogueItem(productObjekt);
+
     // Attributterne fra det catalog-varen
     this.Catalogue_Id = productObjekt.Id;
     // Attributterne fra stock-materialet burde være her
@@ -107,13 +180,6 @@ class product extends catalogueItem {
     );
   }
 
-  // this.Title = catalogueObject.Title;
-  // this.StandardSize = catalogueObject.StandardWeight;
-  // this.StandardWeight = catalogueObject.StandardSize;
-  // this.ItemDescription = catalogueObject.ItemDescription;
-  // this.ImageLink = catalogueObject.ImageLink;
-  // this.Category = catalogueObject.Category;
-
   render() {
     const productHTML =
       /*html*/
@@ -122,9 +188,10 @@ class product extends catalogueItem {
     <img href=${this.ImageLink}>
     <h3>Produkt Navn: ${this.Title}</h3>
     <p>Kategori: ${this.Category}</p>
-    <p>Standard Størrelse: ${this.StandardSize} cm</p>
-    <p>Standard Vægt: ${this.StandardWeight} gram</p>
     <p>Produkt Beskrivelse: ${this.ItemDescription} </p>
+    <p>skal printes i : ${this.Name}</p>
+    <p>Materiale: ${this.Material}</p>
+    <p>Farve: ${this.Colour}</p>
     <p>Produktets ønskede størrelse: ${this.ProductSize} cm</p>
     <p>Produktets beregnede pris: ${this.CalculatedPrize} dkk</p>
     </article>
@@ -135,45 +202,5 @@ class product extends catalogueItem {
   // Her er en metode som giver en attirbut, så en setter?
   prizeCalculator(weight, height) {
     return weight + height * 20;
-  }
-}
-
-function stockObjectToClass() {
-  const stockMaterialObject = {
-    Name: "Sort Hård",
-    Material: "PLA",
-    Colour: "black",
-    GramInStock: "1000",
-    MinAmountReached: 0,
-    SalesPrize: "200",
-  };
-  const stockMaterialClass = new stockMaterial(stockMaterialObject);
-  console.log(stockMaterialClass.render());
-}
-
-class stockMaterial {
-  constructor(stockObject) {
-    this.Name = stockObject.Name;
-    this.Material = stockObject.Material;
-    this.Colour = stockObject.Colour;
-    this.GramInStock = stockObject.GramInStock;
-    this.MinAmountReached = stockObject.MinAmountReached;
-    this.SalesPrize = stockObject.SalesPrize;
-  }
-
-  render() {
-    const stockHTML =
-      /*html*/
-      `
-    <article>
-    <h3>Produkt Navn: ${this.Name}</h3>
-    <p>Materiale: ${this.Material}</p>
-    <p>Farve: ${this.Colour} cm</p>
-    <:> Mængde på lager: ${this.GramInStock} gram</p>
-    <p>Minimum nået: ${this.MinAmountReached} </p>
-    <p>Salgspris: ${this.SalesPrize} dkk/gram</p>
-    </article>
-    `;
-    return stockHTML;
   }
 }

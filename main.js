@@ -1,5 +1,6 @@
 "use strict"
 
+import { startViews } from "./spa-router.js";
 import { getCatalogueData, getStockData } from "./fetch-data.js";
 import { catalogueData, stockData } from "./tempoary-data-doc.js";
 
@@ -9,7 +10,8 @@ import { createCatalogClasses } from "./classes-test-doc.js";
 window.addEventListener("load", start);
 
 function start() {
-    activateEventListeners();
+  startViews();
+  activateEventListeners();
   console.log("Hello Team10");
   // Tester om man kan hente data - Lukas
   getAllData();

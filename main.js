@@ -1,4 +1,6 @@
+"use strict"
 
+import { startViews } from "./spa-router.js";
 import { getCatalogueData, getStockData } from "./fetch-data.js";
 import { catalogueData, stockData } from "./tempoary-data-doc.js";
 
@@ -8,7 +10,8 @@ import { createCatalogClasses } from "./classes-test-doc.js";
 window.addEventListener("load", start);
 
 function start() {
-    activateEventListeners();
+  startViews();
+  activateEventListeners();
   console.log("Hello Team10");
   // Tester om man kan hente data - Lukas
   getAllData();
@@ -24,12 +27,6 @@ async function getAllData() {
   console.log(catalogueData);
   createCatalogClasses(catalogueData);
 }
-
-document.querySelector("#faq-link").addEventListener("click", showDialogFaq);
-document.querySelector("#handelsbetingelser-link").addEventListener("click", showDialogHandelsbetingelser);
-document.querySelector("#datapolitik-link").addEventListener("click", showDialogDatapolitik);
-
-
 
 function activateEventListeners() {
   document.querySelector("#faq-link").addEventListener("click", showDialogFaq);

@@ -1,4 +1,3 @@
-"use strict";
 
 import { getCatalogueData, getStockData } from "./fetch-data.js";
 import { catalogueData, stockData } from "./tempoary-data-doc.js";

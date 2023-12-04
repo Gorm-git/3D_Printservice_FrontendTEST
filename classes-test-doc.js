@@ -1,6 +1,3 @@
-
-
-
 // Denne funktion laver klasserne for vores katalog-vare
 export function createCatalogClasses(dataList) {
   // Opret en tom liste så hvert objekt vi fetcher kan komme ind som en instans af en klasse
@@ -17,6 +14,9 @@ export function createCatalogClasses(dataList) {
 
   console.log(classList);
   callRenderMethod(classList);
+
+  // Her laver jeg et instance - af stock.
+  stockObjectToClass();
 }
 
 // Note til os selv. Denne klasse skal vel kun rigtigt ses af Admin, som skal kunne opdatere dem... - Lukas
@@ -61,7 +61,7 @@ function callRenderMethod(listOfInstances) {
   }
 
   // her laver jeg en instance af en produkt-klasse, bare lige for at teste den.
-  const produktObjekt = {
+  const productObject = {
     // Attributterne fra det catalog-varen
     Catalogue_Id: "17",
     Title: "Gherkin Skyskraber",
@@ -75,9 +75,15 @@ function callRenderMethod(listOfInstances) {
     Stock_Id: "21",
     ProductSize: 20,
   };
+
   // Her laves instansen...
-  const productInstance = new product(produktObjekt);
+  const productInstance = new product(productObject);
   // Her kalder jeg render-metoden for produkt klassen for at se HTML'en som metoden returnere.
+
+  console.log("Catalog størrelse: ", productInstance.StandardSize);
+  console.log("Catalog vægt: ", productInstance.StandardWeight);
+  console.log("Størrelse: ", productInstance.ProductSize);
+  console.log("pris: ", productInstance.CalculatedPrize);
   console.log(productInstance.render());
 }
 
@@ -88,23 +94,25 @@ class product extends catalogueItem {
     super(catalogueItem);
     // Attributterne fra det catalog-varen
     this.Catalogue_Id = productObjekt.Id;
-    this.Title = productObjekt.Title;
-    this.ItemDescription = productObjekt.ItemDescription;
-    this.ImageLink = productObjekt.ImageLink;
-    this.Category = productObjekt.Category;
-    // Redundante attriubtter fra catalog-varen?
-    this.StandardSize = productObjekt.StandardWeight;
-    this.StandardWeight = productObjekt.StandardSize;
     // Attributterne fra stock-materialet burde være her
     this.Stock_Id = productObjekt.Stock_Id;
     // Attributterne unikke for produktet:
     this.ProductSize = productObjekt.ProductSize;
+    this.StandardWeight;
+
     // Denne her bør være private og skal have en metode der udregner den - Lukas.
     this.CalculatedPrize = this.prizeCalculator(
       this.StandardWeight,
       this.ProductSize
     );
   }
+
+  // this.Title = catalogueObject.Title;
+  // this.StandardSize = catalogueObject.StandardWeight;
+  // this.StandardWeight = catalogueObject.StandardSize;
+  // this.ItemDescription = catalogueObject.ItemDescription;
+  // this.ImageLink = catalogueObject.ImageLink;
+  // this.Category = catalogueObject.Category;
 
   render() {
     const productHTML =
@@ -127,5 +135,45 @@ class product extends catalogueItem {
   // Her er en metode som giver en attirbut, så en setter?
   prizeCalculator(weight, height) {
     return weight + height * 20;
+  }
+}
+
+function stockObjectToClass() {
+  const stockMaterialObject = {
+    Name: "Sort Hård",
+    Material: "PLA",
+    Colour: "black",
+    GramInStock: "1000",
+    MinAmountReached: 0,
+    SalesPrize: "200",
+  };
+  const stockMaterialClass = new stockMaterial(stockMaterialObject);
+  console.log(stockMaterialClass.render());
+}
+
+class stockMaterial {
+  constructor(stockObject) {
+    this.Name = stockObject.Name;
+    this.Material = stockObject.Material;
+    this.Colour = stockObject.Colour;
+    this.GramInStock = stockObject.GramInStock;
+    this.MinAmountReached = stockObject.MinAmountReached;
+    this.SalesPrize = stockObject.SalesPrize;
+  }
+
+  render() {
+    const stockHTML =
+      /*html*/
+      `
+    <article>
+    <h3>Produkt Navn: ${this.Name}</h3>
+    <p>Materiale: ${this.Material}</p>
+    <p>Farve: ${this.Colour} cm</p>
+    <:> Mængde på lager: ${this.GramInStock} gram</p>
+    <p>Minimum nået: ${this.MinAmountReached} </p>
+    <p>Salgspris: ${this.SalesPrize} dkk/gram</p>
+    </article>
+    `;
+    return stockHTML;
   }
 }

@@ -1,7 +1,7 @@
 const endpoint = "https://3dprintservice.azurewebsites.net/";
 
 async function getCatalogueData() {
-  const response = await fetch(`${endpoint}/products`);
+  const response = await fetch(`${endpoint}/catalogue`);
   const catalogueData = await response.json();
   return catalogueData;
 }

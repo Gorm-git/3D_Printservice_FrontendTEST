@@ -1,0 +1,4 @@
+{
+	"appService.defaultWebAppToDeploy": "/subscriptions/7f5653eb-b949-4e75-a672-4c54c9c9e32c/resourceGroups/appsvc_linux_centralus_basic/providers/Microsoft.Web/sites/3DPrintShop",
+	"appService.deploySubpath": "."
+}

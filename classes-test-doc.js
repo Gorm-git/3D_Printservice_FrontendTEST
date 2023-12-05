@@ -26,11 +26,24 @@ export function createCatalogClasses(dataList) {
 
 function callRenderMethod(listOfInstances) {
   console.log("No3. CallRenderMethod");
+  document.querySelector("#produkt_overblik").innerHTML = "";
   for (const instance of listOfInstances) {
-    console.log();
     const classHTML = instance.render();
+    //Hvorfor er vores HMTL på danks?!
+   
+    document
+      .querySelector("#produkt_overblik")
+      .insertAdjacentHTML("beforeend", classHTML);
+    document
+      .querySelector("#produkt_overblik article:last-child .btn-view-product")
+      .addEventListener("click", viewButtonClicked);
+
     console.log(classHTML);
   }
+}
+
+function viewButtonClicked(event) {
+  console.log("view button clicked: ", event);
 }
 
 // PT.lokal-global variabel.
@@ -99,12 +112,13 @@ class catalogueItem {
       /*html*/
       `
     <article>
-    <img href=${this.ImageLink}>
     <h3>Produkt Navn: ${this.Title}</h3>
+    <img href='${this.ImageLink}' alt= "foto"/>
     <p>Kategori: ${this.Category}</p>
     <p>Standard Størrelse: ${this.StandardSize} cm</p>
     <p>Standard Vægt: ${this.StandardWeight} gram</p>
     <p>Produkt Beskrivelse: ${this.ItemDescription} </p>
+    <button class="produkt_overblik" >Se Produkt</button>
     </article>
     `;
 

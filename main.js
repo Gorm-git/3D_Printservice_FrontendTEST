@@ -19,13 +19,13 @@ function start() {
 
 // Dette er en test funktion der skal se om vi kan hente data:
 async function getAllData() {
+  const CatalougeItems = await getCatalogueData();
   // const stockData = await getStockData();
-  // const productsData = await getCatalogueData();
-  // console.log(stockData);
-  // console.log(productsData);
+  console.log(stockData);
+  console.log(CatalougeItems);
 
   console.log(catalogueData);
-  createCatalogClasses(catalogueData);
+  createCatalogClasses(CatalougeItems);
 }
 
 function activateEventListeners() {
